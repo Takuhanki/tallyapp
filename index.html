@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tally App</title>
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@600&display=swap');
+    body {
+        font-family: 'Montserrat', Arial, Helvetica, sans-serif;
+        font-weight: 600;
+        text-align: center;
+        background: #f5f5f5;
+        padding: 20px;
+    }
+    button {
+        font-family: 'Montserrat', Arial, Helvetica, sans-serif;
+        font-weight: 600;
+        font-size: 20px;
+        padding: 15px 25px;
+        margin: 10px;
+        border: none;
+        border-radius: 8px;
+        color: white;
+        cursor: pointer;
+        box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+        transition: background 0.2s, box-shadow 0.2s;
+    }
+    button:active {
+        box-shadow: 0 1px 3px rgba(0,0,0,0.12);
+    }
+    #yes { background-color: #28a745; }
+    #no { background-color: #dc3545; }
+    #done { background-color: #007bff; }
+    #hide { background-color: #6c757d; }
+    #tally {
+        font-size: 32px;
+        margin: 20px 0;
+        transition: opacity 0.3s;
+        color: #1a1a1a;
+        letter-spacing: 1px;
+    }
+    #result {
+        font-size: 24px;
+        color: #7d4fde;
+        margin-top: 20px;
+    }
+</style>
+</head>
+<body>
+
+<h1 style="font-family: 'Montserrat', Arial, Helvetica, sans-serif; font-weight: 600; letter-spacing: 2px;">Tally Tracker</h1>
+<div id="tally">Tally: 0</div>
+
+<button id="yes">Yes</button>
+<button id="no">No</button>
+<br>
+<button id="done">Done</button>
+<button id="hide">Hide Tally</button>
+
+<div id="result"></div>
+
+<script>
+    let tally = 0;
+    let tallyVisible = true;
+
+    document.getElementById('yes').onclick = function() {
+        tally -= 1;
+        updateTally();
+    };
+
+    document.getElementById('no').onclick = function() {
+        tally += 1;
+        updateTally();
+    };
+
+    document.getElementById('done').onclick = function() {
+        if (tally >= 0) {
+            document.getElementById('result').innerText = "proceed with round";
+        } else {
+            document.getElementById('result').innerText = "New Statement";
+        }
+    };
+
+    document.getElementById('hide').onclick = function() {
+        tallyVisible = !tallyVisible;
+        document.getElementById('tally').style.display = tallyVisible ? 'block' : 'none';
+        document.getElementById('hide').innerText = tallyVisible ? 'Hide Tally' : 'Show Tally';
+    };
+
+    function updateTally() {
+        document.getElementById('tally').innerText = `Tally: ${tally}`;
+    }
+</script>
+
+</body>
+</html>
