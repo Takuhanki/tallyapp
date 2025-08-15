@@ -6,13 +6,12 @@
     <title>Tally Tracker</title>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="manifest" href="manifest.json">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="apple-mobile-web-app-title" content="Tally Tracker">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             font-family: 'Montserrat', sans-serif;
             background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
@@ -23,7 +22,6 @@
             padding: 20px;
             color: #333;
         }
-        
         .container {
             background: rgba(255, 255, 255, 0.92);
             border-radius: 20px;
@@ -35,7 +33,6 @@
             backdrop-filter: blur(10px);
             border: 1px solid rgba(255, 255, 255, 0.3);
         }
-        
         h1 {
             color: #2c3e50;
             font-size: 2.5rem;
@@ -43,7 +40,6 @@
             text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
             letter-spacing: 1px;
         }
-        
         .tally-container {
             background: white;
             border-radius: 15px;
@@ -52,7 +48,6 @@
             box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
             border: 1px solid rgba(0, 0, 0, 0.05);
         }
-        
         #tally {
             font-size: 4.5rem;
             font-weight: 700;
@@ -61,20 +56,17 @@
             transition: all 0.3s ease;
             text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
         }
-        
         .buttons {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 15px;
             margin-top: 20px;
         }
-        
         .btn-group {
             display: flex;
             flex-direction: column;
             gap: 15px;
         }
-        
         button {
             font-family: 'Montserrat', sans-serif;
             font-weight: 600;
@@ -91,35 +83,20 @@
             justify-content: center;
             gap: 10px;
         }
-        
         button:active {
             transform: translateY(2px);
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
         }
-        
-        #yes {
-            background: linear-gradient(to right, #27ae60, #2ecc71);
-        }
-        
-        #no {
-            background: linear-gradient(to right, #e74c3c, #c0392b);
-        }
-        
-        #done {
-            background: linear-gradient(to right, #3498db, #2980b9);
-        }
-        
-        #hide {
-            background: linear-gradient(to right, #9b59b6, #8e44ad);
-        }
-        
+        #yes { background: linear-gradient(to right, #27ae60, #2ecc71); }
+        #no { background: linear-gradient(to right, #e74c3c, #c0392b); }
+        #done { background: linear-gradient(to right, #3498db, #2980b9); }
+        #hide { background: linear-gradient(to right, #9b59b6, #8e44ad); }
         #reset {
             background: linear-gradient(to right, #f39c12, #e67e22);
             grid-column: span 2;
             padding: 18px;
             font-size: 1.2rem;
         }
-        
         #result {
             font-size: 1.8rem;
             font-weight: 700;
@@ -132,27 +109,22 @@
             box-shadow: 0 4px 10px rgba(0,0,0,0.05);
             transition: all 0.3s ease;
         }
-        
         .result-proceed {
             color: #27ae60;
             background: rgba(46, 204, 113, 0.15);
         }
-        
         .result-new {
             color: #e74c3c;
             background: rgba(231, 76, 60, 0.15);
         }
-        
         .counter-animation {
             animation: pulse 0.5s ease;
         }
-        
         @keyframes pulse {
             0% { transform: scale(1); }
             50% { transform: scale(1.1); }
             100% { transform: scale(1); }
         }
-        
         .instructions {
             margin-top: 25px;
             padding: 15px;
@@ -163,51 +135,31 @@
             text-align: left;
             line-height: 1.6;
         }
-        
         .instructions h3 {
             color: #2c3e50;
             margin-bottom: 10px;
             text-align: center;
         }
-        
         .instructions ul {
             padding-left: 20px;
         }
-        
         .instructions li {
             margin-bottom: 8px;
         }
-        
         @media (max-width: 500px) {
-            .container {
-                padding: 20px;
-            }
-            
-            h1 {
-                font-size: 2rem;
-            }
-            
-            #tally {
-                font-size: 3.5rem;
-            }
-            
-            .buttons {
-                grid-template-columns: 1fr;
-            }
-            
-            #reset {
-                grid-column: 1;
-            }
+            .container { padding: 20px; }
+            h1 { font-size: 2rem; }
+            #tally { font-size: 3.5rem; }
+            .buttons { grid-template-columns: 1fr; }
+            #reset { grid-column: 1; }
         }
     </style>
 </head>
 <body>
     <div class="container">
         <h1><i class="fas fa-calculator"></i> Tally Tracker</h1>
-        
         <div class="tally-container">
             <div id="tally">0</div>
-            
             <div class="buttons">
                 <button id="yes"><i class="fas fa-minus"></i> Yes</button>
                 <button id="no"><i class="fas fa-plus"></i> No</button>
@@ -216,9 +168,7 @@
                 <button id="reset"><i class="fas fa-redo"></i> Reset Counter</button>
             </div>
         </div>
-        
         <div id="result">Press "Done" for result</div>
-        
         <div class="instructions">
             <h3>How to Use</h3>
             <ul>
@@ -233,10 +183,9 @@
     </div>
 
     <script>
-        let tally = 0;
+        let tally = localStorage.getItem("tally") ? parseInt(localStorage.getItem("tally")) : 0;
         let tallyVisible = true;
 
-        // Get DOM elements
         const tallyElement = document.getElementById('tally');
         const resultElement = document.getElementById('result');
         const yesBtn = document.getElementById('yes');
@@ -245,10 +194,8 @@
         const hideBtn = document.getElementById('hide');
         const resetBtn = document.getElementById('reset');
 
-        // Initialize
         updateTally();
-        
-        // Event listeners
+
         yesBtn.addEventListener('click', () => {
             tally -= 1;
             updateTally();
@@ -287,13 +234,17 @@
             }, 2000);
         });
 
-        // Update tally display with animation
         function updateTally() {
             tallyElement.textContent = tally;
+            localStorage.setItem("tally", tally);
             tallyElement.classList.add('counter-animation');
             setTimeout(() => {
                 tallyElement.classList.remove('counter-animation');
             }, 500);
+        }
+
+        if ("serviceWorker" in navigator) {
+            navigator.serviceWorker.register("service-worker.js");
         }
     </script>
 </body>
