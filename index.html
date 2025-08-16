@@ -7,11 +7,23 @@
 <style>
   body {
     font-family: Arial, sans-serif;
-    text-align: center;
     background-color: #f5f5f5;
     margin: 0;
     padding: 0;
     color: #333;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+  }
+  .container {
+    max-width: 400px;
+    width: 90%;
+    text-align: center;
+    background: white;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0px 4px 10px rgba(0,0,0,0.1);
   }
   #prompt-container {
     display: flex;
@@ -19,29 +31,27 @@
     align-items: center;
     background-color: #e0e0e0;
     padding: 10px;
+    border-radius: 8px;
+    margin-bottom: 15px;
   }
   .prompt {
     width: 45%;
     font-size: 16px;
     font-weight: bold;
     text-align: center;
-    white-space: normal;
     word-wrap: break-word;
   }
   #prompt-left {
     transform: rotate(180deg);
   }
-  #prompt-right {
-    transform: rotate(0deg);
-  }
   #tally {
-    font-size: 20px;
+    font-size: 24px;
     margin: 15px 0;
   }
   button {
-    padding: 8px 16px;
-    font-size: 14px;
-    margin: 4px;
+    padding: 12px 20px;
+    font-size: 16px;
+    margin: 6px;
     border: none;
     border-radius: 8px;
     cursor: pointer;
@@ -61,32 +71,33 @@
   #footer {
     font-size: 12px;
     color: #555;
-    margin-top: 20px;
-    padding-bottom: 10px;
+    margin-top: 15px;
   }
 </style>
 </head>
 <body>
 
-<div id="prompt-container">
-  <div class="prompt" id="prompt-left"></div>
-  <div class="prompt" id="prompt-right"></div>
-</div>
+<div class="container">
+  <div id="prompt-container">
+    <div class="prompt" id="prompt-left"></div>
+    <div class="prompt" id="prompt-right"></div>
+  </div>
 
-<h2 id="tally">Tally: 0</h2>
+  <h2 id="tally">Tally: 0</h2>
 
-<div>
-  <button id="yesBtn">Yes</button>
-  <button id="noBtn">No</button>
-  <button id="doneBtn">Done</button>
-</div>
-<div>
-  <button id="promptBtn">Random Prompt</button>
-  <button id="hideTallyBtn">Hide Tally</button>
-  <button id="resetTallyBtn">Reset Tally</button>
-</div>
+  <div>
+    <button id="yesBtn">Yes</button>
+    <button id="noBtn">No</button>
+    <button id="doneBtn">Done</button>
+  </div>
+  <div>
+    <button id="promptBtn">Random Prompt</button>
+    <button id="hideTallyBtn">Hide Tally</button>
+    <button id="resetTallyBtn">Reset Tally</button>
+  </div>
 
-<div id="footer">App by Evan</div>
+  <div id="footer">Fib or Fall: App by Evan</div>
+</div>
 
 <script>
 let tally = 0;
@@ -165,7 +176,6 @@ function setRandomPrompt() {
   document.getElementById("prompt-right").textContent = fullPrompt;
 }
 
-// set initial prompt when page loads
 setRandomPrompt();
 
 function updateTally() {
