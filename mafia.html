@@ -1,103 +1,87 @@
-<style>
-  body {
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-    margin: 0;
-    padding: 0;
-    background: #f9f9f9;
-    color: #222;
-    text-align: center;
-  }
-
-  .container {
-    max-width: 420px;
-    margin: 0 auto;
-    padding: 20px;
-  }
-
-  h2, h3 {
-    font-weight: 600;
-    margin-bottom: 10px;
-  }
-
-  input[type="text"] {
-    padding: 12px;
-    width: 80%;
-    border: 1px solid #ddd;
-    border-radius: 10px;
-    margin-bottom: 12px;
-    font-size: 16px;
-  }
-
-  button {
-    display: block;
-    width: 100%;
-    padding: 14px;
-    margin: 6px 0;
-    font-size: 16px;
-    border: none;
-    border-radius: 12px;
-    background: #007aff;
-    color: white;
-    font-weight: 500;
-    cursor: pointer;
-    transition: background 0.2s;
-  }
-
-  button:hover {
-    background: #005ecb;
-  }
-
-  #playerList {
-    list-style: none;
-    padding: 0;
-    margin: 10px 0 20px 0;
-  }
-
-  
-  #playerList li {
-    background: #fff;
-    border: 1px solid #eee;
-    border-radius: 8px;
-    margin: 4px 0;
-    padding: 10px;
-    font-size: 15px;
-  }
-
-  #voteOptions button {
-    background: #fff;
-    color: #222;
-    border: 1px solid #ddd;
-    font-weight: 500;
-  }
-
-  #voteOptions button:hover {
-    background: #f0f0f0;
-  }
-
-  #roleText {
-    margin: 15px 0;
-    font-size: 18px;
-    font-weight: bold;
-  }
-
-  #footer {
-    margin-top: 20px;
-    font-size: 13px;
-    color: #999;
-  }
-
-  /* Back and grey options */
-  .secondary {
-    background: #e5e5e5;
-    color: #222;
-  }
-
-  .secondary:hover {
-    background: #d0d0d0;
-  }
-</style>
-
-<!-- Mafia Page -->
+<!DOCTYPE html>
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mafia Game</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      margin: 0;
+      padding: 0;
+      background: #f9f9f9;
+      color: #222;
+      text-align: center;
+    }
+    .container {
+      max-width: 420px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    h2, h3 {
+      font-weight: 600;
+      margin-bottom: 10px;
+    }
+    input[type="text"] {
+      padding: 12px;
+      width: 80%;
+      border: 1px solid #ddd;
+      border-radius: 10px;
+      margin-bottom: 12px;
+      font-size: 16px;
+    }
+    button {
+      display: block;
+      width: 100%;
+      padding: 14px;
+      margin: 6px 0;
+      font-size: 16px;
+      border: none;
+      border-radius: 12px;
+      background: #007aff;
+      color: white;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    button:hover { background: #005ecb; }
+    #playerList {
+      list-style: none;
+      padding: 0;
+      margin: 10px 0 20px 0;
+    }
+    #playerList li {
+      background: #fff;
+      border: 1px solid #eee;
+      border-radius: 8px;
+      margin: 4px 0;
+      padding: 10px;
+      font-size: 15px;
+    }
+    #voteOptions button {
+      background: #fff;
+      color: #222;
+      border: 1px solid #ddd;
+      font-weight: 500;
+    }
+    #voteOptions button:hover { background: #f0f0f0; }
+    #roleText {
+      margin: 15px 0;
+      font-size: 18px;
+      font-weight: bold;
+    }
+    #footer {
+      margin-top: 20px;
+      font-size: 13px;
+      color: #999;
+    }
+    .secondary {
+      background: #e5e5e5;
+      color: #222;
+    }
+    .secondary:hover { background: #d0d0d0; }
+  </style>
+</head>
+<body>
 <div class="container" id="mafiaPage">
   <h2>Mafia Game</h2>
 
@@ -130,3 +114,122 @@
 
   <div id="footer">App by Evan</div>
 </div>
+
+<script>
+  let players = [];
+  let roles = {};
+  let currentIndex = 0;
+  let phase = 0; // 0=Night,1=Day
+  const mafiaRoles = ["Mafia", "Detective", "Doctor"];
+
+  function addPlayer() {
+    const name = document.getElementById("playerName").value.trim();
+    if (name && !players.includes(name)) {
+      players.push(name);
+      updatePlayerList();
+      document.getElementById("playerName").value = "";
+    }
+  }
+
+  function updatePlayerList() {
+    const list = document.getElementById("playerList");
+    list.innerHTML = "";
+    players.forEach(p => {
+      const li = document.createElement("li");
+      li.textContent = p;
+      list.appendChild(li);
+    });
+  }
+
+  function assignRoles() {
+    if (players.length < 4) {
+      alert("Need at least 4 players.");
+      return;
+    }
+    roles = {};
+    const shuffled = [...players].sort(() => Math.random() - 0.5);
+    mafiaRoles.forEach((role, i) => roles[shuffled[i]] = role);
+    shuffled.slice(mafiaRoles.length).forEach(p => roles[p] = "Villager");
+
+    document.getElementById("mafiaSetup").style.display = "none";
+    document.getElementById("roleReveal").style.display = "block";
+    currentIndex = 0;
+    showNextPlayer();
+  }
+
+  function showNextPlayer() {
+    if (currentIndex >= players.length) {
+      document.getElementById("roleReveal").style.display = "none";
+      document.getElementById("mafiaGame").style.display = "block";
+      startNight();
+      return;
+    }
+    document.getElementById("currentPlayerName").textContent = players[currentIndex];
+    document.getElementById("roleText").style.display = "none";
+    document.getElementById("revealBtn").style.display = "block";
+    document.getElementById("nextPlayerBtn").style.display = "none";
+  }
+
+  function revealRole() {
+    document.getElementById("roleText").textContent = "Your role: " + roles[players[currentIndex]];
+    document.getElementById("roleText").style.display = "block";
+    document.getElementById("revealBtn").style.display = "none";
+    document.getElementById("nextPlayerBtn").style.display = "block";
+  }
+
+  function nextPlayer() {
+    currentIndex++;
+    showNextPlayer();
+  }
+
+  function startNight() {
+    phase = 0;
+    document.getElementById("phaseTitle").textContent = "Night Phase";
+    document.getElementById("instructions").textContent = "Mafia choose someone to eliminate.";
+    showVoteOptions(players);
+  }
+
+  function nextPhase() {
+    if (phase === 0) {
+      phase = 1;
+      document.getElementById("phaseTitle").textContent = "Day Phase";
+      document.getElementById("instructions").textContent = "All players vote to eliminate a suspect.";
+      showVoteOptions(players);
+    } else {
+      startNight();
+    }
+  }
+
+  function showVoteOptions(candidates) {
+    const container = document.getElementById("voteOptions");
+    container.innerHTML = "";
+    candidates.forEach(name => {
+      const btn = document.createElement("button");
+      btn.textContent = name;
+      btn.onclick = () => eliminatePlayer(name);
+      container.appendChild(btn);
+    });
+  }
+
+  function eliminatePlayer(name) {
+    players = players.filter(p => p !== name);
+    alert(name + " has been eliminated!");
+    updatePlayerList();
+    document.getElementById("voteOptions").innerHTML = "";
+    document.getElementById("newRoundBtn").style.display = "block";
+  }
+
+  function newRound() {
+    document.getElementById("newRoundBtn").style.display = "none";
+    if (players.length <= 2) {
+      alert("Game Over!");
+      resetMafia();
+    } else {
+      startNight();
+    }
+  }
+
+  function resetMafia() {
+    players = [];
+    roles = {};
+    currentIndex =
