@@ -140,3 +140,41 @@ document.getElementById("noBtn").onclick = function() {
   tally++;
   updateTally();
 };
+
+document.getElementById("doneBtn").onclick = function() {
+  let message = tally >= 0 ? "proceed with round" : "New Statement";
+  alert(message);
+};
+
+document.getElementById("promptBtn").onclick = function() {
+  setRandomPrompt();
+};
+
+document.getElementById("hideTallyBtn").onclick = function() {
+  tallyVisible = !tallyVisible;
+  document.getElementById("tally").style.display = tallyVisible ? "block" : "none";
+  document.getElementById("hideTallyBtn").textContent = tallyVisible ? "Hide Tally" : "Show Tally";
+};
+
+document.getElementById("resetTallyBtn").onclick = function() {
+  tally = 0;
+  updateTally();
+};
+
+function setRandomPrompt() {
+  let randomPrompt = prompts[Math.floor(Math.random() * prompts.length)];
+  let fullPrompt = "What's your story about " + randomPrompt;
+  document.getElementById("topPrompt").textContent = fullPrompt;
+  document.getElementById("bottomPrompt").textContent = fullPrompt;
+}
+
+// Initialize prompt
+setRandomPrompt();
+
+function updateTally() {
+  document.getElementById("tally").textContent = "Tally: " + tally;
+}
+</script>
+
+</body>
+</html>
