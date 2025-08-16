@@ -3,18 +3,18 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Mafia Game</title>
+<title>Fib or Fall / Mafia</title>
 <style>
   body {
     font-family: Arial, sans-serif;
     background-color: #f5f5f5;
     margin: 0;
     padding: 0;
+    color: #333;
     display: flex;
     justify-content: center;
     align-items: center;
     min-height: 100vh;
-    color: #333;
   }
   .container {
     width: 90%;
@@ -24,109 +24,62 @@
     padding: 20px;
     border-radius: 12px;
     box-shadow: 0px 4px 10px rgba(0,0,0,0.1);
+    display: none;
+    flex-direction: column;
+    justify-content: space-between;
   }
-  h2 {
-    margin-bottom: 15px;
+  .active {
+    display: flex;
   }
-  input, button, select {
-    padding: 10px;
-    font-size: 16px;
-    margin: 6px;
-    border-radius: 8px;
-    border: 1px solid #ccc;
+  h2, h3 {
+    margin: 10px 0;
   }
   button {
+    padding: 12px 20px;
+    font-size: 16px;
+    margin: 6px;
     border: none;
+    border-radius: 8px;
     cursor: pointer;
+    background-color: #b0b0b0;
+    color: black;
   }
-  #startBtn {
-    background-color: #4CAF50;
-    color: white;
+  #yesBtn { background-color: #4CAF50; color: white; }
+  #noBtn { background-color: #f44336; color: white; }
+  .prompt {
+    font-size: 22px;
+    font-weight: bold;
+    margin: 20px 0;
+    word-wrap: break-word;
   }
-  #nextBtn {
-    background-color: #007BFF;
-    color: white;
-  }
+  #topPrompt { transform: rotate(180deg); }
+  #bottomPrompt { transform: rotate(0deg); }
   #footer {
     font-size: 12px;
     color: #555;
-    margin-top: 15px;
+    margin-top: 10px;
   }
 </style>
 </head>
 <body>
 
-<div class="container">
-  <h2>Mafia Setup</h2>
-  <div id="setup">
-    <p>Enter player names (one per line):</p>
-    <textarea id="playerNames" rows="6" style="width:100%;"></textarea>
-    <p>Select number of Mafia:</p>
-    <select id="mafiaCount">
-      <option>1</option>
-      <option>2</option>
-      <option>3</option>
-    </select>
-    <p>Special roles:</p>
-    <label><input type="checkbox" id="doctor"> Doctor</label><br>
-    <label><input type="checkbox" id="detective"> Detective</label><br>
-    <button id="startBtn">Assign Roles</button>
-  </div>
-
-  <div id="game" style="display:none;">
-    <h3 id="gameTitle">Role Reveal</h3>
-    <p id="instructions">Pass the phone. Tap to reveal your role.</p>
-    <button id="nextBtn">Reveal Next</button>
-    <div id="roleDisplay" style="margin-top:20px; font-size:20px; font-weight:bold;"></div>
-  </div>
-
+<!-- Home Page -->
+<div class="container active" id="homePage">
+  <h2>Choose a Game</h2>
+  <button onclick="showPage('fibPage')">Fib or Fall</button>
+  <button onclick="showPage('mafiaPage')">Mafia</button>
   <div id="footer">App by Evan</div>
 </div>
 
-<script>
-let players = [];
-let roles = [];
-let currentIndex = 0;
-
-document.getElementById("startBtn").onclick = function() {
-  const names = document.getElementById("playerNames").value.trim().split("\n").filter(n => n);
-  const mafiaCount = parseInt(document.getElementById("mafiaCount").value);
-  const doctor = document.getElementById("doctor").checked;
-  const detective = document.getElementById("detective").checked;
-
-  if (names.length < mafiaCount + (doctor?1:0) + (detective?1:0) + 1) {
-    alert("Not enough players for these roles!");
-    return;
-  }
-
-  players = names;
-  roles = Array(mafiaCount).fill("Mafia");
-
-  if (doctor) roles.push("Doctor");
-  if (detective) roles.push("Detective");
-
-  while (roles.length < names.length) roles.push("Villager");
-
-  // shuffle roles
-  roles = roles.sort(() => Math.random() - 0.5);
-
-  document.getElementById("setup").style.display = "none";
-  document.getElementById("game").style.display = "block";
-};
-
-document.getElementById("nextBtn").onclick = function() {
-  if (currentIndex < players.length) {
-    let player = players[currentIndex];
-    let role = roles[currentIndex];
-    document.getElementById("roleDisplay").textContent = player + ": " + role;
-    currentIndex++;
-  } else {
-    document.getElementById("roleDisplay").textContent = "All roles assigned! Start the game.";
-    document.getElementById("instructions").textContent = "Play Mafia rounds manually now.";
-    document.getElementById("nextBtn").style.display = "none";
-  }
-};
-</script>
-
-</body>
-</html>
+<!-- Fib or Fall Page -->
+<div class="container" id="fibPage">
+  <div class="prompt" id="topPrompt"></div>
+  <h2 id="tally">Tally: 0</h2>
+  <div>
+    <button id="yesBtn">Yes</button>
+    <button id="noBtn">No</button>
+    <button id="doneBtn">Done</button>
+  </div>
+  <div>
+    <button id="promptBtn">Random Prompt</button>
+    <button id
