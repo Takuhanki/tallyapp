@@ -1,251 +1,219 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tally Tracker</title>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="manifest" href="manifest.json">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black">
-    <meta name="apple-mobile-web-app-title" content="Tally Tracker">
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body {
-            font-family: 'Montserrat', sans-serif;
-            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
-            color: #333;
-        }
-        .container {
-            background: rgba(255, 255, 255, 0.92);
-            border-radius: 20px;
-            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.25);
-            width: 100%;
-            max-width: 500px;
-            padding: 30px;
-            text-align: center;
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.3);
-        }
-        h1 {
-            color: #2c3e50;
-            font-size: 2.5rem;
-            margin-bottom: 20px;
-            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
-            letter-spacing: 1px;
-        }
-        .tally-container {
-            background: white;
-            border-radius: 15px;
-            padding: 30px;
-            margin: 25px 0;
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
-            border: 1px solid rgba(0, 0, 0, 0.05);
-        }
-        #tally {
-            font-size: 4.5rem;
-            font-weight: 700;
-            color: #3498db;
-            margin: 15px 0;
-            transition: all 0.3s ease;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
-        }
-        .buttons {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 15px;
-            margin-top: 20px;
-        }
-        .btn-group {
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-        }
-        button {
-            font-family: 'Montserrat', sans-serif;
-            font-weight: 600;
-            font-size: 1.1rem;
-            padding: 16px 25px;
-            border: none;
-            border-radius: 12px;
-            color: white;
-            cursor: pointer;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
-            transition: all 0.2s ease;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-        }
-        button:active {
-            transform: translateY(2px);
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
-        }
-        #yes { background: linear-gradient(to right, #27ae60, #2ecc71); }
-        #no { background: linear-gradient(to right, #e74c3c, #c0392b); }
-        #done { background: linear-gradient(to right, #3498db, #2980b9); }
-        #hide { background: linear-gradient(to right, #9b59b6, #8e44ad); }
-        #reset {
-            background: linear-gradient(to right, #f39c12, #e67e22);
-            grid-column: span 2;
-            padding: 18px;
-            font-size: 1.2rem;
-        }
-        #result {
-            font-size: 1.8rem;
-            font-weight: 700;
-            color: #2c3e50;
-            margin-top: 25px;
-            min-height: 60px;
-            padding: 15px;
-            border-radius: 12px;
-            background: rgba(236, 240, 241, 0.7);
-            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
-            transition: all 0.3s ease;
-        }
-        .result-proceed {
-            color: #27ae60;
-            background: rgba(46, 204, 113, 0.15);
-        }
-        .result-new {
-            color: #e74c3c;
-            background: rgba(231, 76, 60, 0.15);
-        }
-        .counter-animation {
-            animation: pulse 0.5s ease;
-        }
-        @keyframes pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.1); }
-            100% { transform: scale(1); }
-        }
-        .instructions {
-            margin-top: 25px;
-            padding: 15px;
-            background: rgba(236, 240, 241, 0.5);
-            border-radius: 12px;
-            font-size: 0.95rem;
-            color: #7f8c8d;
-            text-align: left;
-            line-height: 1.6;
-        }
-        .instructions h3 {
-            color: #2c3e50;
-            margin-bottom: 10px;
-            text-align: center;
-        }
-        .instructions ul {
-            padding-left: 20px;
-        }
-        .instructions li {
-            margin-bottom: 8px;
-        }
-        @media (max-width: 500px) {
-            .container { padding: 20px; }
-            h1 { font-size: 2rem; }
-            #tally { font-size: 3.5rem; }
-            .buttons { grid-template-columns: 1fr; }
-            #reset { grid-column: 1; }
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tally Tracker</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link rel="manifest" href="manifest.json">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<meta name="apple-mobile-web-app-title" content="Tally Tracker">
+
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+    font-family: 'Montserrat', sans-serif;
+    background: #eee;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 10px;
+    color: #333;
+}
+.container {
+    background: #fff;
+    border-radius: 15px;
+    width: 100%;
+    max-width: 450px;
+    padding: 20px;
+    text-align: center;
+    box-shadow: 0 6px 15px rgba(0,0,0,0.1);
+}
+h1 {
+    font-size: 2rem;
+    margin-bottom: 15px;
+}
+#prompt-container {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 15px;
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+.tally-container {
+    background: #f7f7f7;
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 15px;
+    border: 1px solid #ddd;
+}
+#tally {
+    font-size: 3rem;
+    font-weight: 700;
+    color: #555;
+    margin: 10px 0;
+}
+.buttons {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-top: 10px;
+}
+button {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 600;
+    font-size: 1rem;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 10px;
+    color: white;
+    cursor: pointer;
+    box-shadow: 0 3px 6px rgba(0,0,0,0.1);
+    transition: all 0.2s ease;
+}
+button:active { transform: translateY(1px); box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+#yes { background: #27ae60; }
+#no { background: #e74c3c; }
+#done, #shuffle, #hide, #reset { background: #555; }
+#result {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: #333;
+    margin-top: 15px;
+    min-height: 40px;
+    padding: 10px;
+    border-radius: 10px;
+    background: #eee;
+}
+.result-proceed { color: #27ae60; }
+.result-new { color: #e74c3c; }
+.counter-animation { animation: pulse 0.4s ease; }
+@keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.1); } 100% { transform: scale(1); } }
+.instructions { margin-top: 15px; font-size: 0.85rem; color: #555; text-align: left; }
+.instructions h3 { text-align: center; font-size: 1rem; }
+.instructions ul { padding-left: 18px; }
+.instructions li { margin-bottom: 5px; }
+@media (max-width: 450px) { h1 { font-size: 1.6rem; } #tally { font-size: 2.5rem; } }
+</style>
 </head>
 <body>
-    <div class="container">
-        <h1><i class="fas fa-calculator"></i> Tally Tracker</h1>
-        <div class="tally-container">
-            <div id="tally">0</div>
-            <div class="buttons">
-                <button id="yes"><i class="fas fa-minus"></i> Yes</button>
-                <button id="no"><i class="fas fa-plus"></i> No</button>
-                <button id="done"><i class="fas fa-check"></i> Done</button>
-                <button id="hide"><i class="fas fa-eye-slash"></i> Hide</button>
-                <button id="reset"><i class="fas fa-redo"></i> Reset Counter</button>
-            </div>
-        </div>
-        <div id="result">Press "Done" for result</div>
-        <div class="instructions">
-            <h3>How to Use</h3>
-            <ul>
-                <li><strong>Yes:</strong> Decreases tally by 1</li>
-                <li><strong>No:</strong> Increases tally by 1</li>
-                <li><strong>Done:</strong> Check the final decision based on tally</li>
-                <li><strong>Hide:</strong> Toggle visibility of the tally counter</li>
-                <li><strong>Reset:</strong> Reset counter to zero</li>
-                <li><strong>Result:</strong> "Proceed with round" if tally ≥ 0, "New Statement" if negative</li>
-            </ul>
-        </div>
+<div class="container">
+<h1><i class="fas fa-calculator"></i> Tally Tracker</h1>
+
+<div id="prompt-container">
+    <div id="prompt-left">Press "Shuffle" to pick a prompt</div>
+    <div id="prompt-right">Press "Shuffle" to pick a prompt</div>
+</div>
+<button id="shuffle"><i class="fas fa-random"></i> Shuffle Prompt</button>
+
+<div class="tally-container">
+    <div id="tally">0</div>
+    <div class="buttons">
+        <button id="yes"><i class="fas fa-minus"></i> Yes</button>
+        <button id="no"><i class="fas fa-plus"></i> No</button>
+        <button id="done"><i class="fas fa-check"></i> Done</button>
+        <button id="hide"><i class="fas fa-eye-slash"></i> Hide</button>
+        <button id="reset"><i class="fas fa-redo"></i> Reset</button>
     </div>
+</div>
 
-    <script>
-        let tally = localStorage.getItem("tally") ? parseInt(localStorage.getItem("tally")) : 0;
-        let tallyVisible = true;
+<div id="result">Press "Done" for result</div>
 
-        const tallyElement = document.getElementById('tally');
-        const resultElement = document.getElementById('result');
-        const yesBtn = document.getElementById('yes');
-        const noBtn = document.getElementById('no');
-        const doneBtn = document.getElementById('done');
-        const hideBtn = document.getElementById('hide');
-        const resetBtn = document.getElementById('reset');
+<div class="instructions">
+<h3>How to Use</h3>
+<ul>
+<li>Yes: Decreases tally by 1</li>
+<li>No: Increases tally by 1</li>
+<li>Done: Check final decision</li>
+<li>Hide: Toggle tally visibility</li>
+<li>Reset: Reset tally to zero</li>
+<li>Shuffle: Pick a random prompt</li>
+</ul>
+</div>
+</div>
 
-        updateTally();
+<script>
+let tally = localStorage.getItem("tally") ? parseInt(localStorage.getItem("tally")) : 0;
+let tallyVisible = true;
 
-        yesBtn.addEventListener('click', () => {
-            tally -= 1;
-            updateTally();
-        });
+const tallyElement = document.getElementById('tally');
+const resultElement = document.getElementById('result');
+const yesBtn = document.getElementById('yes');
+const noBtn = document.getElementById('no');
+const doneBtn = document.getElementById('done');
+const hideBtn = document.getElementById('hide');
+const resetBtn = document.getElementById('reset');
+const shuffleBtn = document.getElementById('shuffle');
+const promptLeft = document.getElementById('prompt-left');
+const promptRight = document.getElementById('prompt-right');
 
-        noBtn.addEventListener('click', () => {
-            tally += 1;
-            updateTally();
-        });
+const prompts = [
+"What's your story about sneaking out past 2am?",
+"What's your story about almost dying?",
+"What's your story about fainting?",
+"What's your story about stealing from a store?",
+"What's your story about meeting someone famous?",
+"What's your story about getting food poisoning?",
+"What's your story about being right about a conspiracy theory?",
+"What's your story about predicting the future?",
+"What's your story about travelling abroad?",
+"What's your story about breaking a bone?",
+"What's your story about getting into a fight (verbally or physically) with a stranger?",
+"What's your story about waking screaming from a nightmare?",
+"What's your story about dropping a baby?",
+"What's your story about getting stuck on an elevator?",
+"What's your story about getting your credit card stolen?",
+"What's your story about seeing or hearing a ghost?",
+"What's your story about accidentally setting something on fire?",
+"What's your story about pranking someone?",
+"What's your story about getting called the wrong name?",
+"What's your story about cheating on a test?",
+"What's your story about getting hospitalized from an allergic reaction?",
+"What's your story about going to the emergency room?",
+"What's your story about joining a protest?",
+"What's your story about sending a message to the wrong person?",
+"What's your story about getting scammed online?",
+"What's your story about getting attacked by an animal?",
+"What's your story about throwing up on someone?",
+"What's your story about finding your photo where you weren't expecting it?",
+"What's your story about being on the news?",
+"What's your story about a failed stunt?",
+"What's your story about accidentally losing a tooth?",
+"What's your story about bribing someone?",
+"What's your story about exploring somewhere abandoned?"
+];
 
-        doneBtn.addEventListener('click', () => {
-            if (tally >= 0) {
-                resultElement.innerText = "Proceed with round";
-                resultElement.className = 'result-proceed';
-            } else {
-                resultElement.innerText = "New Statement";
-                resultElement.className = 'result-new';
-            }
-        });
+function updateTally() {
+    tallyElement.textContent = tally;
+    localStorage.setItem("tally", tally);
+    tallyElement.classList.add('counter-animation');
+    setTimeout(() => tallyElement.classList.remove('counter-animation'), 400);
+}
 
-        hideBtn.addEventListener('click', () => {
-            tallyVisible = !tallyVisible;
-            tallyElement.style.display = tallyVisible ? 'block' : 'none';
-            hideBtn.innerHTML = tallyVisible ? '<i class="fas fa-eye-slash"></i> Hide' : '<i class="fas fa-eye"></i> Show';
-        });
+yesBtn.addEventListener('click', () => { tally -= 1; updateTally(); });
+noBtn.addEventListener('click', () => { tally += 1; updateTally(); });
+doneBtn.addEventListener('click', () => {
+    if(tally >=0){ resultElement.innerText="Proceed with round"; resultElement.className='result-proceed';}
+    else{ resultElement.innerText="New Statement"; resultElement.className='result-new';}
+});
+hideBtn.addEventListener('click', () => {
+    tallyVisible = !tallyVisible;
+    tallyElement.style.display = tallyVisible ? 'block':'none';
+    hideBtn.innerHTML = tallyVisible ? '<i class="fas fa-eye-slash"></i> Hide':'<i class="fas fa-eye"></i> Show';
+});
+resetBtn.addEventListener('click', () => { tally=0; updateTally(); resultElement.innerText="Counter reset"; resultElement.className=''; setTimeout(()=>{if(resultElement.innerText==="Counter reset") resultElement.innerText='Press "Done" for result';},2000); });
+shuffleBtn.addEventListener('click', () => {
+    let p = prompts[Math.floor(Math.random()*prompts.length)];
+    promptLeft.innerText = p;
+    promptRight.innerText = p;
+});
 
-        resetBtn.addEventListener('click', () => {
-            tally = 0;
-            updateTally();
-            resultElement.innerText = "Counter reset to zero";
-            resultElement.className = '';
-            setTimeout(() => {
-                if (resultElement.innerText === "Counter reset to zero") {
-                    resultElement.innerText = "Press \"Done\" for result";
-                }
-            }, 2000);
-        });
+updateTally();
 
-        function updateTally() {
-            tallyElement.textContent = tally;
-            localStorage.setItem("tally", tally);
-            tallyElement.classList.add('counter-animation');
-            setTimeout(() => {
-                tallyElement.classList.remove('counter-animation');
-            }, 500);
-        }
-
-        if ("serviceWorker" in navigator) {
-            navigator.serviceWorker.register("service-worker.js");
-        }
-    </script>
+if("serviceWorker" in navigator){ navigator.serviceWorker.register("service-worker.js"); }
+</script>
 </body>
 </html>
