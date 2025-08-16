@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Fib or Fall</title>
+<title>Tally App</title>
 <style>
   body {
     font-family: Arial, sans-serif;
@@ -29,13 +29,16 @@
     justify-content: space-between;
   }
   .prompt {
-    font-size: 18px;
+    font-size: 22px;
     font-weight: bold;
-    margin: 10px 0;
+    margin: 20px 0;
     word-wrap: break-word;
   }
-  #bottomPrompt {
+  #topPrompt {
     transform: rotate(180deg);
+  }
+  #bottomPrompt {
+    transform: rotate(0deg);
   }
   #tally {
     font-size: 24px;
@@ -168,7 +171,6 @@ function setRandomPrompt() {
   document.getElementById("bottomPrompt").textContent = fullPrompt;
 }
 
-// Initialize prompt
 setRandomPrompt();
 
 function updateTally() {
