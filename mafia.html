@@ -21,24 +21,28 @@
   <!-- Game Phase -->
   <div id="mafiaGame" style="display:none;">
     <h3 id="phaseTitle">Night Phase</h3>
-    <p id="instructions">Pass the phone to the Mafia...</p>
-    <button onclick="nextPhase()">Next</button>
+    <p id="instructions"></p>
+    <div id="voteOptions"></div>
+    <button id="nextPhaseBtn" onclick="nextPhase()">Next Phase</button>
+    <button id="newRoundBtn" style="display:none;" onclick="newRound()">New Round</button>
   </div>
 
-  <button onclick="showPage('homePage')">Back</button>
+  <button onclick="resetMafia()">Back</button>
   <div id="footer">App by Evan</div>
 </div>
 
 <script>
 let players = [];
+let alivePlayers = [];
 let roles = {};
-let roleList = ["Mafia","Detective","Doctor"]; 
 let currentPlayerIndex = 0;
+let mafiaTarget = null, doctorSave = null;
 
 function addPlayer() {
   let name = document.getElementById("playerName").value.trim();
   if (name) {
     players.push(name);
+    alivePlayers.push(name);
     let li = document.createElement("li");
     li.textContent = name;
     document.getElementById("playerList").appendChild(li);
@@ -56,7 +60,6 @@ function assignRoles() {
   roles[shuffled[2]] = "Doctor";
   for (let i=3;i<shuffled.length;i++) roles[shuffled[i]]="Villager";
   
-  // Switch to role reveal phase
   document.getElementById("mafiaSetup").style.display="none";
   document.getElementById("roleReveal").style.display="block";
   currentPlayerIndex = 0;
@@ -83,26 +86,90 @@ function nextPlayer() {
   if (currentPlayerIndex < players.length) {
     showCurrentPlayer();
   } else {
-    // All players have seen roles → start Mafia game
     document.getElementById("roleReveal").style.display="none";
     document.getElementById("mafiaGame").style.display="block";
-    document.getElementById("phaseTitle").textContent="Night Phase";
-    document.getElementById("instructions").textContent="Mafia, pick someone to eliminate.";
+    startNightPhase();
   }
 }
 
-function startMafiaGame() {
-  document.getElementById("roleReveal").style.display="none";
-  document.getElementById("mafiaGame").style.display="block";
+function startNightPhase() {
+  mafiaTarget = null; doctorSave = null;
+  document.getElementById("phaseTitle").textContent="Night Phase";
+  document.getElementById("instructions").textContent="Mafia, choose someone to eliminate.";
+  showVoteOptions("Mafia");
+}
+
+function showVoteOptions(role) {
+  let container = document.getElementById("voteOptions");
+  container.innerHTML = "";
+  alivePlayers.forEach(p=>{
+    let btn = document.createElement("button");
+    btn.textContent = p;
+    btn.onclick = () => handleVote(role, p);
+    container.appendChild(btn);
+  });
+}
+
+function handleVote(role, player) {
+  if (role=="Mafia") {
+    mafiaTarget = player;
+    document.getElementById("instructions").textContent="Detective, choose someone to investigate.";
+    showVoteOptions("Detective");
+  } else if (role=="Detective") {
+    let result = roles[player]=="Mafia" ? player+" IS Mafia!" : player+" is NOT Mafia.";
+    alert(result);
+    document.getElementById("instructions").textContent="Doctor, choose someone to save.";
+    showVoteOptions("Doctor");
+  } else if (role=="Doctor") {
+    doctorSave = player;
+    resolveNight();
+  } else if (role=="Day") {
+    eliminate(player);
+    document.getElementById("instructions").textContent=player+" was eliminated. Night begins again.";
+    document.getElementById("voteOptions").innerHTML="";
+    document.getElementById("newRoundBtn").style.display="block";
+  }
+}
+
+function resolveNight() {
+  if (mafiaTarget && mafiaTarget!=doctorSave) {
+    eliminate(mafiaTarget);
+    alert(mafiaTarget+" was eliminated last night.");
+  } else {
+    alert("Nobody was eliminated last night.");
+  }
+  document.getElementById("instructions").textContent="Day Phase: Vote to eliminate a suspect.";
+  showVoteOptions("Day");
+}
+
+function eliminate(player) {
+  alivePlayers = alivePlayers.filter(p=>p!==player);
 }
 
 function nextPhase() {
+  // Allow skipping if needed
   if (document.getElementById("phaseTitle").textContent=="Night Phase") {
+    resolveNight();
     document.getElementById("phaseTitle").textContent="Day Phase";
-    document.getElementById("instructions").textContent="Everyone votes to eliminate a suspect.";
   } else {
-    document.getElementById("phaseTitle").textContent="Night Phase";
-    document.getElementById("instructions").textContent="Mafia, pick someone to eliminate.";
+    startNightPhase();
   }
+}
+
+function newRound() {
+  document.getElementById("newRoundBtn").style.display="none";
+  startNightPhase();
+}
+
+function resetMafia() {
+  players = [];
+  alivePlayers = [];
+  roles = {};
+  mafiaTarget=null; doctorSave=null;
+  document.getElementById("playerList").innerHTML="";
+  document.getElementById("mafiaSetup").style.display="block";
+  document.getElementById("roleReveal").style.display="none";
+  document.getElementById("mafiaGame").style.display="none";
+  showPage('homePage'); // ensure it goes back to homepage
 }
 </script>
