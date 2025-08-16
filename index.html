@@ -3,217 +3,153 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Tally Tracker</title>
-<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-<link rel="manifest" href="manifest.json">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black">
-<meta name="apple-mobile-web-app-title" content="Tally Tracker">
-
+<title>Fib or Fall</title>
 <style>
-* { margin: 0; padding: 0; box-sizing: border-box; }
-body {
-    font-family: 'Montserrat', sans-serif;
-    background: #eee;
-    min-height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: flex-start;
-    padding: 10px;
-    color: #333;
-}
-.container {
-    background: #fff;
-    border-radius: 15px;
-    width: 100%;
-    max-width: 450px;
-    padding: 20px;
+  body {
+    font-family: Arial, sans-serif;
     text-align: center;
-    box-shadow: 0 6px 15px rgba(0,0,0,0.1);
-}
-h1 {
-    font-size: 2rem;
-    margin-bottom: 15px;
-}
-#prompt-container {
+    background-color: #f5f5f5;
+    margin: 0;
+    padding: 0;
+    color: #333;
+  }
+  #prompt-container {
     display: flex;
     justify-content: space-between;
-    margin-bottom: 15px;
-    font-size: 0.9rem;
-    font-weight: 600;
-}
-.tally-container {
-    background: #f7f7f7;
-    border-radius: 12px;
-    padding: 20px;
-    margin-bottom: 15px;
-    border: 1px solid #ddd;
-}
-#tally {
-    font-size: 3rem;
-    font-weight: 700;
-    color: #555;
-    margin: 10px 0;
-}
-.buttons {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 10px;
-    margin-top: 10px;
-}
-button {
-    font-family: 'Montserrat', sans-serif;
-    font-weight: 600;
-    font-size: 1rem;
-    padding: 12px 20px;
-    border: none;
-    border-radius: 10px;
-    color: white;
-    cursor: pointer;
-    box-shadow: 0 3px 6px rgba(0,0,0,0.1);
-    transition: all 0.2s ease;
-}
-button:active { transform: translateY(1px); box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
-#yes { background: #27ae60; }
-#no { background: #e74c3c; }
-#done, #shuffle, #hide, #reset { background: #555; }
-#result {
-    font-size: 1.2rem;
-    font-weight: 700;
-    color: #333;
-    margin-top: 15px;
-    min-height: 40px;
+    align-items: center;
+    background-color: #e0e0e0;
     padding: 10px;
-    border-radius: 10px;
-    background: #eee;
-}
-.result-proceed { color: #27ae60; }
-.result-new { color: #e74c3c; }
-.counter-animation { animation: pulse 0.4s ease; }
-@keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.1); } 100% { transform: scale(1); } }
-.instructions { margin-top: 15px; font-size: 0.85rem; color: #555; text-align: left; }
-.instructions h3 { text-align: center; font-size: 1rem; }
-.instructions ul { padding-left: 18px; }
-.instructions li { margin-bottom: 5px; }
-@media (max-width: 450px) { h1 { font-size: 1.6rem; } #tally { font-size: 2.5rem; } }
+  }
+  .prompt {
+    width: 45%;
+    font-size: 16px;
+    font-weight: bold;
+    text-align: center;
+    white-space: normal;
+    word-wrap: break-word;
+  }
+  #prompt-left {
+    transform: rotate(180deg);
+  }
+  #prompt-right {
+    transform: rotate(0deg);
+  }
+  #tally {
+    font-size: 20px;
+    margin: 15px 0;
+  }
+  button {
+    padding: 8px 16px;
+    font-size: 14px;
+    margin: 4px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+  }
+  #yesBtn {
+    background-color: #4CAF50;
+    color: white;
+  }
+  #noBtn {
+    background-color: #f44336;
+    color: white;
+  }
+  #doneBtn, #promptBtn {
+    background-color: #b0b0b0;
+    color: black;
+  }
 </style>
 </head>
 <body>
-<div class="container">
-<h1><i class="fas fa-calculator"></i> Tally Tracker</h1>
 
 <div id="prompt-container">
-    <div id="prompt-left">Press "Shuffle" to pick a prompt</div>
-    <div id="prompt-right">Press "Shuffle" to pick a prompt</div>
-</div>
-<button id="shuffle"><i class="fas fa-random"></i> Shuffle Prompt</button>
-
-<div class="tally-container">
-    <div id="tally">0</div>
-    <div class="buttons">
-        <button id="yes"><i class="fas fa-minus"></i> Yes</button>
-        <button id="no"><i class="fas fa-plus"></i> No</button>
-        <button id="done"><i class="fas fa-check"></i> Done</button>
-        <button id="hide"><i class="fas fa-eye-slash"></i> Hide</button>
-        <button id="reset"><i class="fas fa-redo"></i> Reset</button>
-    </div>
+  <div class="prompt" id="prompt-left"></div>
+  <div class="prompt" id="prompt-right"></div>
 </div>
 
-<div id="result">Press "Done" for result</div>
+<h2 id="tally">Tally: 0</h2>
 
-<div class="instructions">
-<h3>How to Use</h3>
-<ul>
-<li>Yes: Decreases tally by 1</li>
-<li>No: Increases tally by 1</li>
-<li>Done: Check final decision</li>
-<li>Hide: Toggle tally visibility</li>
-<li>Reset: Reset tally to zero</li>
-<li>Shuffle: Pick a random prompt</li>
-</ul>
+<div>
+  <button id="yesBtn">Yes</button>
+  <button id="noBtn">No</button>
+  <button id="doneBtn">Done</button>
 </div>
+<div>
+  <button id="promptBtn">Random Prompt</button>
 </div>
 
 <script>
-let tally = localStorage.getItem("tally") ? parseInt(localStorage.getItem("tally")) : 0;
-let tallyVisible = true;
+let tally = 0;
 
-const tallyElement = document.getElementById('tally');
-const resultElement = document.getElementById('result');
-const yesBtn = document.getElementById('yes');
-const noBtn = document.getElementById('no');
-const doneBtn = document.getElementById('done');
-const hideBtn = document.getElementById('hide');
-const resetBtn = document.getElementById('reset');
-const shuffleBtn = document.getElementById('shuffle');
-const promptLeft = document.getElementById('prompt-left');
-const promptRight = document.getElementById('prompt-right');
-
-const prompts = [
-"What's your story about sneaking out past 2am?",
-"What's your story about almost dying?",
-"What's your story about fainting?",
-"What's your story about stealing from a store?",
-"What's your story about meeting someone famous?",
-"What's your story about getting food poisoning?",
-"What's your story about being right about a conspiracy theory?",
-"What's your story about predicting the future?",
-"What's your story about travelling abroad?",
-"What's your story about breaking a bone?",
-"What's your story about getting into a fight (verbally or physically) with a stranger?",
-"What's your story about waking screaming from a nightmare?",
-"What's your story about dropping a baby?",
-"What's your story about getting stuck on an elevator?",
-"What's your story about getting your credit card stolen?",
-"What's your story about seeing or hearing a ghost?",
-"What's your story about accidentally setting something on fire?",
-"What's your story about pranking someone?",
-"What's your story about getting called the wrong name?",
-"What's your story about cheating on a test?",
-"What's your story about getting hospitalized from an allergic reaction?",
-"What's your story about going to the emergency room?",
-"What's your story about joining a protest?",
-"What's your story about sending a message to the wrong person?",
-"What's your story about getting scammed online?",
-"What's your story about getting attacked by an animal?",
-"What's your story about throwing up on someone?",
-"What's your story about finding your photo where you weren't expecting it?",
-"What's your story about being on the news?",
-"What's your story about a failed stunt?",
-"What's your story about accidentally losing a tooth?",
-"What's your story about bribing someone?",
-"What's your story about exploring somewhere abandoned?"
+let prompts = [
+  "sneaking out past 2am?",
+  "almost dying?",
+  "fainting?",
+  "stealing from a store?",
+  "meeting someone famous?",
+  "getting food poisoning?",
+  "being right about a conspiracy theory?",
+  "predicting the future?",
+  "travelling abroad?",
+  "breaking a bone?",
+  "getting into a fight (verbally or physically) with a stranger?",
+  "waking screaming from a nightmare?",
+  "dropping a baby?",
+  "getting stuck on an elevator?",
+  "getting your credit card stolen?",
+  "seeing or hearing a ghost?",
+  "accidentally setting something on fire?",
+  "pranking someone?",
+  "getting called the wrong name?",
+  "cheating on a test?",
+  "getting hospitalized from an allergic reaction?",
+  "going to the emergency room?",
+  "joining a protest?",
+  "sending a message to the wrong person?",
+  "getting scammed online?",
+  "getting attacked by an animal?",
+  "throwing up on someone?",
+  "finding your photo where you weren’t expecting it?",
+  "being on the news?",
+  "a failed stunt?",
+  "accidentally losing a tooth?",
+  "bribing someone?",
+  "exploring somewhere abandoned?"
 ];
 
-function updateTally() {
-    tallyElement.textContent = tally;
-    localStorage.setItem("tally", tally);
-    tallyElement.classList.add('counter-animation');
-    setTimeout(() => tallyElement.classList.remove('counter-animation'), 400);
+document.getElementById("yesBtn").onclick = function() {
+  tally--;
+  updateTally();
+};
+
+document.getElementById("noBtn").onclick = function() {
+  tally++;
+  updateTally();
+};
+
+document.getElementById("doneBtn").onclick = function() {
+  let message = tally >= 0 ? "Continue with round" : "Choose a new prompt";
+  alert(message);
+};
+
+document.getElementById("promptBtn").onclick = function() {
+  setRandomPrompt();
+};
+
+function setRandomPrompt() {
+  let randomPrompt = prompts[Math.floor(Math.random() * prompts.length)];
+  let fullPrompt = "What's your story about... " + randomPrompt;
+  document.getElementById("prompt-left").textContent = fullPrompt;
+  document.getElementById("prompt-right").textContent = fullPrompt;
 }
 
-yesBtn.addEventListener('click', () => { tally -= 1; updateTally(); });
-noBtn.addEventListener('click', () => { tally += 1; updateTally(); });
-doneBtn.addEventListener('click', () => {
-    if(tally >=0){ resultElement.innerText="Proceed with round"; resultElement.className='result-proceed';}
-    else{ resultElement.innerText="New Statement"; resultElement.className='result-new';}
-});
-hideBtn.addEventListener('click', () => {
-    tallyVisible = !tallyVisible;
-    tallyElement.style.display = tallyVisible ? 'block':'none';
-    hideBtn.innerHTML = tallyVisible ? '<i class="fas fa-eye-slash"></i> Hide':'<i class="fas fa-eye"></i> Show';
-});
-resetBtn.addEventListener('click', () => { tally=0; updateTally(); resultElement.innerText="Counter reset"; resultElement.className=''; setTimeout(()=>{if(resultElement.innerText==="Counter reset") resultElement.innerText='Press "Done" for result';},2000); });
-shuffleBtn.addEventListener('click', () => {
-    let p = prompts[Math.floor(Math.random()*prompts.length)];
-    promptLeft.innerText = p;
-    promptRight.innerText = p;
-});
 
-updateTally();
+setRandomPrompt();
 
-if("serviceWorker" in navigator){ navigator.serviceWorker.register("service-worker.js"); }
+function updateTally() {
+  document.getElementById("tally").textContent = "Tally: " + tally;
+}
 </script>
+
 </body>
 </html>
