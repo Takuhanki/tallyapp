@@ -17,31 +17,24 @@
     min-height: 100vh;
   }
   .container {
-    max-width: 400px;
     width: 90%;
+    max-width: 400px;
     text-align: center;
     background: white;
     padding: 20px;
     border-radius: 12px;
     box-shadow: 0px 4px 10px rgba(0,0,0,0.1);
-  }
-  #prompt-container {
     display: flex;
+    flex-direction: column;
     justify-content: space-between;
-    align-items: center;
-    background-color: #e0e0e0;
-    padding: 10px;
-    border-radius: 8px;
-    margin-bottom: 15px;
   }
   .prompt {
-    width: 45%;
-    font-size: 16px;
+    font-size: 18px;
     font-weight: bold;
-    text-align: center;
+    margin: 10px 0;
     word-wrap: break-word;
   }
-  #prompt-left {
+  #bottomPrompt {
     transform: rotate(180deg);
   }
   #tally {
@@ -71,17 +64,14 @@
   #footer {
     font-size: 12px;
     color: #555;
-    margin-top: 15px;
+    margin-top: 10px;
   }
 </style>
 </head>
 <body>
 
 <div class="container">
-  <div id="prompt-container">
-    <div class="prompt" id="prompt-left"></div>
-    <div class="prompt" id="prompt-right"></div>
-  </div>
+  <div class="prompt" id="topPrompt"></div>
 
   <h2 id="tally">Tally: 0</h2>
 
@@ -96,7 +86,9 @@
     <button id="resetTallyBtn">Reset Tally</button>
   </div>
 
-  <div id="footer">Fib or Fall: App by Evan</div>
+  <div class="prompt" id="bottomPrompt"></div>
+
+  <div id="footer">App by Evan</div>
 </div>
 
 <script>
@@ -148,40 +140,3 @@ document.getElementById("noBtn").onclick = function() {
   tally++;
   updateTally();
 };
-
-document.getElementById("doneBtn").onclick = function() {
-  let message = tally >= 0 ? "proceed with round" : "New Statement";
-  alert(message);
-};
-
-document.getElementById("promptBtn").onclick = function() {
-  setRandomPrompt();
-};
-
-document.getElementById("hideTallyBtn").onclick = function() {
-  tallyVisible = !tallyVisible;
-  document.getElementById("tally").style.display = tallyVisible ? "block" : "none";
-  document.getElementById("hideTallyBtn").textContent = tallyVisible ? "Hide Tally" : "Show Tally";
-};
-
-document.getElementById("resetTallyBtn").onclick = function() {
-  tally = 0;
-  updateTally();
-};
-
-function setRandomPrompt() {
-  let randomPrompt = prompts[Math.floor(Math.random() * prompts.length)];
-  let fullPrompt = "What's your story about " + randomPrompt;
-  document.getElementById("prompt-left").textContent = fullPrompt;
-  document.getElementById("prompt-right").textContent = fullPrompt;
-}
-
-setRandomPrompt();
-
-function updateTally() {
-  document.getElementById("tally").textContent = "Tally: " + tally;
-}
-</script>
-
-</body>
-</html>
