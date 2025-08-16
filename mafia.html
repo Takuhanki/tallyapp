@@ -1,85 +1,108 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Fib or Fall / Mafia</title>
-<style>
-  body {
-    font-family: Arial, sans-serif;
-    background-color: #f5f5f5;
-    margin: 0;
-    padding: 0;
-    color: #333;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 100vh;
-  }
-  .container {
-    width: 90%;
-    max-width: 400px;
-    text-align: center;
-    background: white;
-    padding: 20px;
-    border-radius: 12px;
-    box-shadow: 0px 4px 10px rgba(0,0,0,0.1);
-    display: none;
-    flex-direction: column;
-    justify-content: space-between;
-  }
-  .active {
-    display: flex;
-  }
-  h2, h3 {
-    margin: 10px 0;
-  }
-  button {
-    padding: 12px 20px;
-    font-size: 16px;
-    margin: 6px;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    background-color: #b0b0b0;
-    color: black;
-  }
-  #yesBtn { background-color: #4CAF50; color: white; }
-  #noBtn { background-color: #f44336; color: white; }
-  .prompt {
-    font-size: 22px;
-    font-weight: bold;
-    margin: 20px 0;
-    word-wrap: break-word;
-  }
-  #topPrompt { transform: rotate(180deg); }
-  #bottomPrompt { transform: rotate(0deg); }
-  #footer {
-    font-size: 12px;
-    color: #555;
-    margin-top: 10px;
-  }
-</style>
-</head>
-<body>
+<!-- Mafia Page -->
+<div class="container" id="mafiaPage">
+  <h2>Mafia Game</h2>
 
-<!-- Home Page -->
-<div class="container active" id="homePage">
-  <h2>Choose a Game</h2>
-  <button onclick="showPage('fibPage')">Fib or Fall</button>
-  <button onclick="showPage('mafiaPage')">Mafia</button>
+  <!-- Setup -->
+  <div id="mafiaSetup">
+    <input type="text" id="playerName" placeholder="Enter player name">
+    <button onclick="addPlayer()">Add Player</button>
+    <ul id="playerList"></ul>
+    <button onclick="assignRoles()">Assign Roles</button>
+  </div>
+
+  <!-- Role Reveal Phase -->
+  <div id="roleReveal" style="display:none;">
+    <h3 id="currentPlayerName"></h3>
+    <button id="revealBtn" onclick="revealRole()">Reveal Role</button>
+    <p id="roleText" style="display:none; font-weight:bold; font-size:18px;"></p>
+    <button id="nextPlayerBtn" style="display:none;" onclick="nextPlayer()">Hide Role / Next</button>
+  </div>
+
+  <!-- Game Phase -->
+  <div id="mafiaGame" style="display:none;">
+    <h3 id="phaseTitle">Night Phase</h3>
+    <p id="instructions">Pass the phone to the Mafia...</p>
+    <button onclick="nextPhase()">Next</button>
+  </div>
+
+  <button onclick="showPage('homePage')">Back</button>
   <div id="footer">App by Evan</div>
 </div>
 
-<!-- Fib or Fall Page -->
-<div class="container" id="fibPage">
-  <div class="prompt" id="topPrompt"></div>
-  <h2 id="tally">Tally: 0</h2>
-  <div>
-    <button id="yesBtn">Yes</button>
-    <button id="noBtn">No</button>
-    <button id="doneBtn">Done</button>
-  </div>
-  <div>
-    <button id="promptBtn">Random Prompt</button>
-    <button id
+<script>
+let players = [];
+let roles = {};
+let roleList = ["Mafia","Detective","Doctor"]; 
+let currentPlayerIndex = 0;
+
+function addPlayer() {
+  let name = document.getElementById("playerName").value.trim();
+  if (name) {
+    players.push(name);
+    let li = document.createElement("li");
+    li.textContent = name;
+    document.getElementById("playerList").appendChild(li);
+    document.getElementById("playerName").value = "";
+  }
+}
+
+function assignRoles() {
+  if (players.length < 4) { alert("Need at least 4 players!"); return; }
+  
+  let shuffled = [...players].sort(()=>0.5-Math.random());
+  roles = {};
+  roles[shuffled[0]] = "Mafia";
+  roles[shuffled[1]] = "Detective";
+  roles[shuffled[2]] = "Doctor";
+  for (let i=3;i<shuffled.length;i++) roles[shuffled[i]]="Villager";
+  
+  // Switch to role reveal phase
+  document.getElementById("mafiaSetup").style.display="none";
+  document.getElementById("roleReveal").style.display="block";
+  currentPlayerIndex = 0;
+  showCurrentPlayer();
+}
+
+function showCurrentPlayer() {
+  document.getElementById("roleText").style.display = "none";
+  document.getElementById("nextPlayerBtn").style.display = "none";
+  document.getElementById("revealBtn").style.display = "inline-block";
+  document.getElementById("currentPlayerName").textContent = players[currentPlayerIndex] + ", tap to reveal your role";
+}
+
+function revealRole() {
+  let player = players[currentPlayerIndex];
+  document.getElementById("roleText").textContent = "Your role: " + roles[player];
+  document.getElementById("roleText").style.display = "block";
+  document.getElementById("revealBtn").style.display = "none";
+  document.getElementById("nextPlayerBtn").style.display = "inline-block";
+}
+
+function nextPlayer() {
+  currentPlayerIndex++;
+  if (currentPlayerIndex < players.length) {
+    showCurrentPlayer();
+  } else {
+    // All players have seen roles → start Mafia game
+    document.getElementById("roleReveal").style.display="none";
+    document.getElementById("mafiaGame").style.display="block";
+    document.getElementById("phaseTitle").textContent="Night Phase";
+    document.getElementById("instructions").textContent="Mafia, pick someone to eliminate.";
+  }
+}
+
+function startMafiaGame() {
+  document.getElementById("roleReveal").style.display="none";
+  document.getElementById("mafiaGame").style.display="block";
+}
+
+function nextPhase() {
+  if (document.getElementById("phaseTitle").textContent=="Night Phase") {
+    document.getElementById("phaseTitle").textContent="Day Phase";
+    document.getElementById("instructions").textContent="Everyone votes to eliminate a suspect.";
+  } else {
+    document.getElementById("phaseTitle").textContent="Night Phase";
+    document.getElementById("instructions").textContent="Mafia, pick someone to eliminate.";
+  }
+}
+</script>
