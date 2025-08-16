@@ -54,9 +54,15 @@
     background-color: #f44336;
     color: white;
   }
-  #doneBtn, #promptBtn {
+  #doneBtn, #promptBtn, #hideTallyBtn, #resetTallyBtn {
     background-color: #b0b0b0;
     color: black;
+  }
+  #footer {
+    font-size: 12px;
+    color: #555;
+    margin-top: 20px;
+    padding-bottom: 10px;
   }
 </style>
 </head>
@@ -76,10 +82,15 @@
 </div>
 <div>
   <button id="promptBtn">Random Prompt</button>
+  <button id="hideTallyBtn">Hide Tally</button>
+  <button id="resetTallyBtn">Reset Tally</button>
 </div>
+
+<div id="footer">App by Evan</div>
 
 <script>
 let tally = 0;
+let tallyVisible = true;
 
 let prompts = [
   "sneaking out past 2am?",
@@ -128,7 +139,7 @@ document.getElementById("noBtn").onclick = function() {
 };
 
 document.getElementById("doneBtn").onclick = function() {
-  let message = tally >= 0 ? "Continue with round" : "Choose a new prompt";
+  let message = tally >= 0 ? "proceed with round" : "New Statement";
   alert(message);
 };
 
@@ -136,14 +147,25 @@ document.getElementById("promptBtn").onclick = function() {
   setRandomPrompt();
 };
 
+document.getElementById("hideTallyBtn").onclick = function() {
+  tallyVisible = !tallyVisible;
+  document.getElementById("tally").style.display = tallyVisible ? "block" : "none";
+  document.getElementById("hideTallyBtn").textContent = tallyVisible ? "Hide Tally" : "Show Tally";
+};
+
+document.getElementById("resetTallyBtn").onclick = function() {
+  tally = 0;
+  updateTally();
+};
+
 function setRandomPrompt() {
   let randomPrompt = prompts[Math.floor(Math.random() * prompts.length)];
-  let fullPrompt = "What's your story about... " + randomPrompt;
+  let fullPrompt = "What's your story about " + randomPrompt;
   document.getElementById("prompt-left").textContent = fullPrompt;
   document.getElementById("prompt-right").textContent = fullPrompt;
 }
 
-
+// set initial prompt when page loads
 setRandomPrompt();
 
 function updateTally() {
