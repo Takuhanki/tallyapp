@@ -1,590 +1,423 @@
-<!DOCTYPE html>
-<html>
-<head>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Mafia Game</title>
-  <style>
-    * {
-      box-sizing: border-box;
-    }
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-      margin: 0;
-      padding: 0;
-      background: linear-gradient(135deg, #1a2a6c, #b21f1f, #1a2a6c);
-      color: white;
-      text-align: center;
-      min-height: 100vh;
-      overflow-x: hidden;
-    }
-    .container {
-      max-width: 420px;
-      margin: 0 auto;
-      padding: 20px;
-    }
-    .game-card {
-      background: rgba(0, 0, 0, 0.8);
-      border-radius: 20px;
-      padding: 20px;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-      margin-bottom: 20px;
-      backdrop-filter: blur(10px);
-    }
-    h1, h2, h3 {
-      font-weight: 700;
-      margin: 0 0 15px 0;
-      text-shadow: 0 2px 4px rgba(0,0,0,0.5);
-    }
-    h1 {
-      font-size: 32px;
-      background: linear-gradient(to right, #ff7e5f, #feb47b);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      margin: 10px 0 20px;
-    }
-    input[type="text"] {
-      padding: 14px;
-      width: 100%;
-      border: none;
-      border-radius: 12px;
-      margin-bottom: 15px;
-      font-size: 16px;
-      background: rgba(255, 255, 255, 0.9);
-      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    }
-    button {
-      display: block;
-      width: 100%;
-      padding: 16px;
-      margin: 10px 0;
-      font-size: 17px;
-      border: none;
-      border-radius: 15px;
-      background: linear-gradient(to right, #007aff, #00a8ff);
-      color: white;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      box-shadow: 0 4px 15px rgba(0, 122, 255, 0.3);
-    }
-    button:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 6px 20px rgba(0, 122, 255, 0.4);
-    }
-    button:active {
-      transform: translateY(1px);
-    }
-    #playerList {
-      list-style: none;
-      padding: 0;
-      margin: 20px 0;
-      max-height: 200px;
-      overflow-y: auto;
-      border-radius: 10px;
-      background: rgba(255, 255, 255, 0.1);
-    }
-    #playerList li {
-      background: rgba(255, 255, 255, 0.1);
-      border-radius: 10px;
-      margin: 8px 0;
-      padding: 12px;
-      font-size: 16px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      transition: all 0.3s;
-    }
-    #playerList li:hover {
-      background: rgba(255, 255, 255, 0.2);
-    }
-    #playerList li .role-badge {
-      background: rgba(0, 122, 255, 0.7);
-      border-radius: 10px;
-      padding: 3px 8px;
-      font-size: 12px;
-      font-weight: 500;
-    }
-    #voteOptions {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 10px;
-      margin: 15px 0;
-    }
-    #voteOptions button {
-      margin: 0;
-    }
-    #roleText {
-      margin: 20px 0;
-      font-size: 22px;
-      font-weight: bold;
-      min-height: 60px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background: rgba(0, 0, 0, 0.4);
-      border-radius: 15px;
-      padding: 15px;
-      text-shadow: 0 2px 4px rgba(0,0,0,0.5);
-    }
-    .phase-indicator {
-      display: flex;
-      justify-content: center;
-      margin: 15px 0;
-      gap: 10px;
-    }
-    .phase-dot {
-      width: 12px;
-      height: 12px;
-      border-radius: 50%;
-      background: rgba(255, 255, 255, 0.3);
-    }
-    .phase-dot.active {
-      background: #00a8ff;
-      box-shadow: 0 0 10px #00a8ff;
-    }
-    .role-badge {
-      display: inline-block;
-      padding: 3px 10px;
-      border-radius: 20px;
-      font-size: 14px;
-      font-weight: 600;
-      margin-left: 8px;
-    }
-    .mafia-badge {
-      background: linear-gradient(to right, #b21f1f, #ff4e50);
-    }
-    .detective-badge {
-      background: linear-gradient(to right, #1a2a6c, #2a75bb);
-    }
-    .doctor-badge {
-      background: linear-gradient(to right, #0a7e3a, #00c853);
-    }
-    .villager-badge {
-      background: linear-gradient(to right, #5a5a5a, #9e9e9e);
-    }
-    .dead-badge {
-      background: linear-gradient(to right, #333, #666);
-      opacity: 0.7;
-    }
-    .player-status {
-      font-size: 14px;
-      margin-top: 5px;
-      opacity: 0.8;
-    }
-    .action-btn {
-      background: linear-gradient(to right, #ff7e5f, #feb47b);
-    }
-    .secondary {
-      background: linear-gradient(to right, #5a5a5a, #9e9e9e);
-    }
-    .danger {
-      background: linear-gradient(to right, #b21f1f, #ff4e50);
-    }
-    .success {
-      background: linear-gradient(to right, #0a7e3a, #00c853);
-    }
-    #footer {
-      margin-top: 20px;
-      font-size: 14px;
-      color: rgba(255, 255, 255, 0.6);
-    }
-    .hidden {
-      display: none;
-    }
-    .fade-in {
-      animation: fadeIn 0.5s ease-in;
-    }
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(20px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-    .role-reveal {
-      background: rgba(0, 0, 0, 0.7);
-      border-radius: 20px;
-      padding: 25px;
-      margin: 20px 0;
-    }
-    .eliminated {
-      text-decoration: line-through;
-      opacity: 0.6;
-    }
-    .night-bg {
-      background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
-    }
-    .day-bg {
-      background: linear-gradient(135deg, #4b79a1, #283e51);
-    }
-    .role-icon {
-      font-size: 40px;
-      margin-bottom: 15px;
-    }
-  </style>
-</head>
-<body>
-<div class="container">
-  <h1>🔫 Mafia Game</h1>
-  
-  <!-- Setup Screen -->
-  <div id="mafiaSetup" class="game-card fade-in">
-    <h2>Game Setup</h2>
-    
-    <input type="text" id="playerName" placeholder="Enter player name">
-    <button onclick="addPlayer()">➕ Add Player</button>
-    
-    <h3>Players</h3>
-    <ul id="playerList"></ul>
-    
-    <button onclick="assignRoles()">🎭 Assign Roles</button>
-    <button class="secondary" onclick="resetGame()">🔄 Reset Game</button>
-  </div>
-  
-  <!-- Role Reveal Screen -->
-  <div id="roleReveal" class="game-card hidden">
-    <h2>Role Reveal</h2>
-    
-    <div class="role-reveal">
-      <h3 id="currentPlayerName">Player Name</h3>
-      <div class="role-icon" id="roleIcon">❓</div>
-      <button id="revealBtn" onclick="revealRole()">👁️ Reveal Your Role</button>
-      <div id="roleText"></div>
-      <button id="nextPlayerBtn" class="hidden" onclick="nextPlayer()">➡️ Next Player</button>
-    </div>
-    
-    <button class="secondary" onclick="backToSetup()">🔙 Back to Setup</button>
-  </div>
-  
-  <!-- Game Screen -->
-  <div id="mafiaGame" class="game-card hidden">
-    <div class="phase-indicator">
-      <div class="phase-dot" id="phaseDot1"></div>
-      <div class="phase-dot" id="phaseDot2"></div>
-    </div>
-    
-    <h2 id="phaseTitle">Night Phase</h2>
-    <p id="instructions">Mafia, choose someone to eliminate...</p>
-    
-    <div id="voteOptions"></div>
-    
-    <button id="nextPhaseBtn" onclick="nextPhase()">🌙 Next Phase</button>
-    <button id="newRoundBtn" class="hidden success" onclick="newRound()">🔄 New Round</button>
-    
-    <button class="secondary" onclick="backToSetup()">🔙 Back to Setup</button>
-  </div>
-  
-  <div id="footer">Pass the phone to the next player when prompted</div>
-</div>
+import React, { useState } from 'react';
+import { Plus, Search, TrendingUp, DollarSign, Trash2, ExternalLink } from 'lucide-react';
 
-<script>
-  // Game state
-  let players = [];
-  let roles = {};
-  let currentIndex = 0;
-  let phase = 0; // 0=Night, 1=Day
-  let eliminatedPlayers = [];
-  let mafiaTarget = null;
-  let doctorSave = null;
-  let detectiveInvestigation = null;
-  
-  // DOM Elements
-  const mafiaSetup = document.getElementById('mafiaSetup');
-  const roleReveal = document.getElementById('roleReveal');
-  const mafiaGame = document.getElementById('mafiaGame');
-  
-  // Initialize game
-  function initGame() {
-    resetGame();
-  }
-  
-  // Add player to the game
-  function addPlayer() {
-    const nameInput = document.getElementById('playerName');
-    const name = nameInput.value.trim();
+export default function ArbitrageTracker() {
+  const [items, setItems] = useState([]);
+  const [showForm, setShowForm] = useState(false);
+  const [formData, setFormData] = useState({
+    name: '',
+    campusPrice: '',
+    amazonPrice: '',
+    condition: 'used-good',
+    category: 'electronics',
+    notes: '',
+    campusUrl: ''
+  });
+  const [sortBy, setSortBy] = useState('profit');
+
+  const categories = [
+    'electronics',
+    'textbooks',
+    'furniture',
+    'clothing',
+    'sports',
+    'other'
+  ];
+
+  const conditions = [
+    { value: 'new', label: 'New' },
+    { value: 'used-like-new', label: 'Used - Like New' },
+    { value: 'used-good', label: 'Used - Good' },
+    { value: 'used-fair', label: 'Used - Fair' }
+  ];
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({ ...prev, [name]: value }));
+  };
+
+  const calculateProfit = (campusPrice, amazonPrice) => {
+    if (!campusPrice || !amazonPrice) return null;
+    const campus = parseFloat(campusPrice);
+    const amazon = parseFloat(amazonPrice);
     
-    if (name) {
-      if (players.includes(name)) {
-        alert('Player already exists!');
-        return;
-      }
-      
-      players.push(name);
-      updatePlayerList();
-      nameInput.value = '';
-      nameInput.focus();
-    }
-  }
-  
-  // Update player list UI
-  function updatePlayerList() {
-    const list = document.getElementById('playerList');
-    list.innerHTML = '';
+    // Estimate Amazon fees (15% referral + $0.99 closing)
+    const amazonFees = (amazon * 0.15) + 0.99;
+    // Estimate shipping cost
+    const shippingCost = 5;
     
-    players.forEach(player => {
-      const li = document.createElement('li');
-      li.textContent = player;
-      
-      if (eliminatedPlayers.includes(player)) {
-        li.classList.add('eliminated');
-        const status = document.createElement('span');
-        status.textContent = '💀 Eliminated';
-        status.className = 'player-status';
-        li.appendChild(status);
-      }
-      
-      list.appendChild(li);
-    });
-  }
-  
-  // Assign roles to players
-  function assignRoles() {
-    if (players.length < 4) {
-      alert('You need at least 4 players to start the game!');
+    const profit = amazon - campus - amazonFees - shippingCost;
+    const margin = ((profit / amazon) * 100);
+    
+    return { profit, margin, fees: amazonFees + shippingCost };
+  };
+
+  const handleSubmit = () => {
+    if (!formData.name || !formData.campusPrice || !formData.amazonPrice) {
+      alert('Please fill in all required fields');
       return;
     }
     
-    // Reset previous game state
-    roles = {};
-    eliminatedPlayers = [];
-    mafiaTarget = null;
-    doctorSave = null;
-    detectiveInvestigation = null;
+    const newItem = {
+      id: Date.now(),
+      ...formData,
+      campusPrice: parseFloat(formData.campusPrice) || 0,
+      amazonPrice: parseFloat(formData.amazonPrice) || 0,
+      dateAdded: new Date().toISOString()
+    };
     
-    // Determine role distribution
-    const shuffledPlayers = [...players].sort(() => Math.random() - 0.5);
-    const mafiaCount = Math.max(1, Math.floor(players.length / 4));
-    const detectiveCount = players.length >= 5 ? 1 : 0;
-    const doctorCount = players.length >= 6 ? 1 : 0;
-    
-    // Assign roles
-    for (let i = 0; i < shuffledPlayers.length; i++) {
-      if (i < mafiaCount) {
-        roles[shuffledPlayers[i]] = 'Mafia';
-      } else if (i < mafiaCount + detectiveCount) {
-        roles[shuffledPlayers[i]] = 'Detective';
-      } else if (i < mafiaCount + detectiveCount + doctorCount) {
-        roles[shuffledPlayers[i]] = 'Doctor';
+    setItems(prev => [...prev, newItem]);
+    setFormData({
+      name: '',
+      campusPrice: '',
+      amazonPrice: '',
+      condition: 'used-good',
+      category: 'electronics',
+      notes: '',
+      campusUrl: ''
+    });
+    setShowForm(false);
+  };
+
+  const deleteItem = (id) => {
+    setItems(prev => prev.filter(item => item.id !== id));
+  };
+
+  const getSortedItems = () => {
+    return [...items].sort((a, b) => {
+      const profitA = calculateProfit(a.campusPrice, a.amazonPrice);
+      const profitB = calculateProfit(b.campusPrice, b.amazonPrice);
+      
+      if (sortBy === 'profit') {
+        return (profitB?.profit || 0) - (profitA?.profit || 0);
+      } else if (sortBy === 'margin') {
+        return (profitB?.margin || 0) - (profitA?.margin || 0);
       } else {
-        roles[shuffledPlayers[i]] = 'Villager';
+        return new Date(b.dateAdded) - new Date(a.dateAdded);
       }
-    }
-    
-    // Switch to role reveal screen
-    mafiaSetup.classList.add('hidden');
-    roleReveal.classList.remove('hidden');
-    roleReveal.classList.add('fade-in');
-    
-    currentIndex = 0;
-    showNextPlayer();
-  }
-  
-  // Show next player for role reveal
-  function showNextPlayer() {
-    if (currentIndex >= players.length) {
-      // All players have seen their roles, start the game
-      startGame();
-      return;
-    }
-    
-    const player = players[currentIndex];
-    document.getElementById('currentPlayerName').textContent = player;
-    document.getElementById('roleText').textContent = '';
-    document.getElementById('roleIcon').textContent = '❓';
-    document.getElementById('revealBtn').classList.remove('hidden');
-    document.getElementById('nextPlayerBtn').classList.add('hidden');
-  }
-  
-  // Reveal role to current player
-  function revealRole() {
-    const player = players[currentIndex];
-    const role = roles[player];
-    
-    document.getElementById('roleText').innerHTML = `You are: <span class="${role.toLowerCase()}-badge role-badge">${role}</span>`;
-    
-    // Set role icon
-    const roleIcon = document.getElementById('roleIcon');
-    if (role === 'Mafia') roleIcon.textContent = '🔫';
-    else if (role === 'Detective') roleIcon.textContent = '🕵️';
-    else if (role === 'Doctor') roleIcon.textContent = '💊';
-    else roleIcon.textContent = '👨‍🌾';
-    
-    document.getElementById('revealBtn').classList.add('hidden');
-    document.getElementById('nextPlayerBtn').classList.remove('hidden');
-  }
-  
-  // Move to next player
-  function nextPlayer() {
-    currentIndex++;
-    showNextPlayer();
-  }
-  
-  // Start the game
-  function startGame() {
-    roleReveal.classList.add('hidden');
-    mafiaGame.classList.remove('hidden');
-    mafiaGame.classList.add('fade-in');
-    
-    // Set initial phase
-    phase = 0;
-    startNight();
-  }
-  
-  // Start night phase
-  function startNight() {
-    // Update UI
-    document.body.className = 'night-bg';
-    document.getElementById('phaseTitle').textContent = '🌙 Night Phase';
-    document.getElementById('phaseDot1').classList.add('active');
-    document.getElementById('phaseDot2').classList.remove('active');
-    document.getElementById('instructions').textContent = 'Mafia, choose someone to eliminate...';
-    document.getElementById('nextPhaseBtn').textContent = '🌙 Next Phase';
-    document.getElementById('newRoundBtn').classList.add('hidden');
-    
-    // Show voting options
-    showVoteOptions(players.filter(p => !eliminatedPlayers.includes(p)));
-  }
-  
-  // Show voting options
-  function showVoteOptions(candidates) {
-    const container = document.getElementById('voteOptions');
-    container.innerHTML = '';
-    
-    candidates.forEach(player => {
-      const btn = document.createElement('button');
-      btn.textContent = player;
-      
-      if (eliminatedPlayers.includes(player)) {
-        btn.disabled = true;
-        btn.classList.add('secondary');
-      } else if (phase === 0) { // Night phase
-        btn.onclick = () => handleNightAction(player);
-      } else { // Day phase
-        btn.onclick = () => votePlayer(player);
-      }
-      
-      container.appendChild(btn);
     });
-  }
-  
-  // Handle night action selection
-  function handleNightAction(player) {
-    const currentRole = roles[players[currentIndex]];
-    
-    if (phase === 0) { // Night phase
-      if (currentRole === 'Mafia') {
-        mafiaTarget = player;
-        alert(`Mafia has chosen to eliminate ${player}!`);
-      } else if (currentRole === 'Detective') {
-        detectiveInvestigation = player;
-        const isMafia = roles[player] === 'Mafia';
-        alert(`Detective investigation: ${player} is ${isMafia ? 'MAFIA! 🔫' : 'NOT Mafia'}`);
-      } else if (currentRole === 'Doctor') {
-        doctorSave = player;
-        alert(`Doctor has chosen to save ${player}!`);
-      }
-    }
-  }
-  
-  // Move to next phase
-  function nextPhase() {
-    if (phase === 0) { // From Night to Day
-      // Process night actions
-      if (mafiaTarget && mafiaTarget !== doctorSave) {
-        eliminatedPlayers.push(mafiaTarget);
-        alert(`${mafiaTarget} was eliminated by the Mafia!`);
-      } else if (mafiaTarget) {
-        alert(`The Doctor saved ${mafiaTarget} from elimination!`);
-      }
-      
-      // Reset night actions
-      mafiaTarget = null;
-      doctorSave = null;
-      detectiveInvestigation = null;
-      
-      // Start day phase
-      phase = 1;
-      startDay();
-    } else { // From Day to Night
-      startNight();
-    }
-    
-    updatePlayerList();
-    checkGameEnd();
-  }
-  
-  // Start day phase
-  function startDay() {
-    // Update UI
-    document.body.className = 'day-bg';
-    document.getElementById('phaseTitle').textContent = '☀️ Day Phase';
-    document.getElementById('phaseDot1').classList.remove('active');
-    document.getElementById('phaseDot2').classList.add('active');
-    document.getElementById('instructions').textContent = 'Discuss and vote to eliminate a suspect';
-    document.getElementById('nextPhaseBtn').textContent = '🌙 Next Night';
-    
-    // Show voting options
-    showVoteOptions(players.filter(p => !eliminatedPlayers.includes(p)));
-  }
-  
-  // Vote to eliminate a player during day
-  function votePlayer(player) {
-    eliminatedPlayers.push(player);
-    alert(`The town has voted to eliminate ${player}!`);
-    updatePlayerList();
-    document.getElementById('newRoundBtn').classList.remove('hidden');
-    checkGameEnd();
-  }
-  
-  // Start a new round
-  function newRound() {
-    document.getElementById('newRoundBtn').classList.add('hidden');
-    startNight();
-  }
-  
-  // Check if game has ended
-  function checkGameEnd() {
-    const alivePlayers = players.filter(p => !eliminatedPlayers.includes(p));
-    const mafiaAlive = alivePlayers.some(p => roles[p] === 'Mafia');
-    const villagersAlive = alivePlayers.some(p => roles[p] !== 'Mafia');
-    
-    if (!mafiaAlive) {
-      alert('🏆 Villagers win! All Mafia have been eliminated!');
-      resetGame();
-    } else if (alivePlayers.length <= 2 && mafiaAlive) {
-      alert('🏆 Mafia wins! They outnumber the villagers!');
-      resetGame();
-    }
-  }
-  
-  // Back to setup screen
-  function backToSetup() {
-    roleReveal.classList.add('hidden');
-    mafiaGame.classList.add('hidden');
-    mafiaSetup.classList.remove('hidden');
-    mafiaSetup.classList.add('fade-in');
-  }
-  
-  // Reset game to initial state
-  function resetGame() {
-    players = [];
-    roles = {};
-    eliminatedPlayers = [];
-    mafiaTarget = null;
-    doctorSave = null;
-    detectiveInvestigation = null;
-    currentIndex = 0;
-    phase = 0;
-    
-    updatePlayerList();
-    document.getElementById('playerName').value = '';
-    
-    // Reset UI state
-    document.body.className = '';
-    mafiaSetup.classList.remove('hidden');
-    roleReveal.classList.add('hidden');
-    mafiaGame.classList.add('hidden');
-  }
-  
-  // Initialize the game
-  initGame();
-</script>
-</body>
-</html>
+  };
+
+  const getAmazonSearchUrl = (itemName) => {
+    return `https://www.amazon.com/s?k=${encodeURIComponent(itemName)}`;
+  };
+
+  const totalProfit = items.reduce((sum, item) => {
+    const calc = calculateProfit(item.campusPrice, item.amazonPrice);
+    return sum + (calc?.profit || 0);
+  }, 0);
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-50 p-6">
+      <div className="max-w-6xl mx-auto">
+        {/* Header */}
+        <div className="bg-white rounded-lg shadow-lg p-6 mb-6">
+          <div className="flex items-center justify-between mb-4">
+            <div>
+              <h1 className="text-3xl font-bold text-gray-800 flex items-center gap-2">
+                <TrendingUp className="text-indigo-600" />
+                Campus Connect → Amazon Arbitrage Tracker
+              </h1>
+              <p className="text-gray-600 mt-2">Track potential flips from your campus marketplace</p>
+            </div>
+            <button
+              onClick={() => setShowForm(!showForm)}
+              className="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-3 rounded-lg flex items-center gap-2 transition-colors"
+            >
+              <Plus size={20} />
+              Add Item
+            </button>
+          </div>
+
+          {/* Stats */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6">
+            <div className="bg-gradient-to-br from-green-50 to-green-100 p-4 rounded-lg border border-green-200">
+              <div className="text-sm text-green-700 font-medium">Total Items Tracked</div>
+              <div className="text-3xl font-bold text-green-800 mt-1">{items.length}</div>
+            </div>
+            <div className="bg-gradient-to-br from-blue-50 to-blue-100 p-4 rounded-lg border border-blue-200">
+              <div className="text-sm text-blue-700 font-medium">Potential Total Profit</div>
+              <div className="text-3xl font-bold text-blue-800 mt-1">${totalProfit.toFixed(2)}</div>
+            </div>
+            <div className="bg-gradient-to-br from-purple-50 to-purple-100 p-4 rounded-lg border border-purple-200">
+              <div className="text-sm text-purple-700 font-medium">Avg Profit/Item</div>
+              <div className="text-3xl font-bold text-purple-800 mt-1">
+                ${items.length > 0 ? (totalProfit / items.length).toFixed(2) : '0.00'}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Add Item Form */}
+        {showForm && (
+          <div className="bg-white rounded-lg shadow-lg p-6 mb-6">
+            <h2 className="text-xl font-bold text-gray-800 mb-4">Add New Item</h2>
+            <div className="space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Item Name *
+                  </label>
+                  <input
+                    type="text"
+                    name="name"
+                    value={formData.name}
+                    onChange={handleInputChange}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                    placeholder="e.g., Apple AirPods Pro"
+                  />
+                </div>
+                
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Campus Connect URL (optional)
+                  </label>
+                  <input
+                    type="url"
+                    name="campusUrl"
+                    value={formData.campusUrl}
+                    onChange={handleInputChange}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                    placeholder="https://umbconnect.com/listing/..."
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Campus Connect Price ($) *
+                  </label>
+                  <input
+                    type="number"
+                    name="campusPrice"
+                    value={formData.campusPrice}
+                    onChange={handleInputChange}
+                    step="0.01"
+                    min="0"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                    placeholder="50.00"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Amazon Price ($) *
+                  </label>
+                  <input
+                    type="number"
+                    name="amazonPrice"
+                    value={formData.amazonPrice}
+                    onChange={handleInputChange}
+                    step="0.01"
+                    min="0"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                    placeholder="120.00"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Condition
+                  </label>
+                  <select
+                    name="condition"
+                    value={formData.condition}
+                    onChange={handleInputChange}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                  >
+                    {conditions.map(cond => (
+                      <option key={cond.value} value={cond.value}>{cond.label}</option>
+                    ))}
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Category
+                  </label>
+                  <select
+                    name="category"
+                    value={formData.category}
+                    onChange={handleInputChange}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                  >
+                    {categories.map(cat => (
+                      <option key={cat} value={cat}>
+                        {cat.charAt(0).toUpperCase() + cat.slice(1)}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Notes (optional)
+                </label>
+                <textarea
+                  name="notes"
+                  value={formData.notes}
+                  onChange={handleInputChange}
+                  rows="3"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                  placeholder="Any additional details, seller info, etc."
+                />
+              </div>
+
+              <div className="flex gap-3">
+                <button
+                  onClick={handleSubmit}
+                  className="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-2 rounded-lg transition-colors"
+                >
+                  Save Item
+                </button>
+                <button
+                  onClick={() => setShowForm(false)}
+                  className="bg-gray-200 hover:bg-gray-300 text-gray-800 px-6 py-2 rounded-lg transition-colors"
+                >
+                  Cancel
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Items List */}
+        <div className="bg-white rounded-lg shadow-lg p-6">
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-xl font-bold text-gray-800">Tracked Items ({items.length})</h2>
+            <div className="flex items-center gap-2">
+              <label className="text-sm text-gray-600">Sort by:</label>
+              <select
+                value={sortBy}
+                onChange={(e) => setSortBy(e.target.value)}
+                className="px-3 py-1 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+              >
+                <option value="profit">Highest Profit</option>
+                <option value="margin">Highest Margin %</option>
+                <option value="date">Most Recent</option>
+              </select>
+            </div>
+          </div>
+
+          {items.length === 0 ? (
+            <div className="text-center py-12">
+              <DollarSign size={48} className="mx-auto text-gray-300 mb-3" />
+              <p className="text-gray-500 text-lg">No items tracked yet</p>
+              <p className="text-gray-400 text-sm mt-1">Add your first item to start tracking arbitrage opportunities</p>
+            </div>
+          ) : (
+            <div className="space-y-4">
+              {getSortedItems().map(item => {
+                const calc = calculateProfit(item.campusPrice, item.amazonPrice);
+                const isProfitable = calc && calc.profit > 0;
+
+                return (
+                  <div
+                    key={item.id}
+                    className={`border-2 rounded-lg p-4 transition-all ${
+                      isProfitable
+                        ? 'border-green-200 bg-green-50'
+                        : 'border-red-200 bg-red-50'
+                    }`}
+                  >
+                    <div className="flex items-start justify-between">
+                      <div className="flex-1">
+                        <div className="flex items-center gap-3 mb-2">
+                          <h3 className="text-lg font-semibold text-gray-800">{item.name}</h3>
+                          <span className="px-2 py-1 bg-gray-200 text-gray-700 text-xs rounded">
+                            {item.category}
+                          </span>
+                          <span className="px-2 py-1 bg-blue-100 text-blue-700 text-xs rounded">
+                            {conditions.find(c => c.value === item.condition)?.label}
+                          </span>
+                        </div>
+
+                        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-3">
+                          <div>
+                            <div className="text-xs text-gray-500">Campus Price</div>
+                            <div className="text-lg font-bold text-gray-800">${item.campusPrice.toFixed(2)}</div>
+                          </div>
+                          <div>
+                            <div className="text-xs text-gray-500">Amazon Price</div>
+                            <div className="text-lg font-bold text-gray-800">${item.amazonPrice.toFixed(2)}</div>
+                          </div>
+                          <div>
+                            <div className="text-xs text-gray-500">Est. Profit</div>
+                            <div className={`text-lg font-bold ${isProfitable ? 'text-green-700' : 'text-red-700'}`}>
+                              ${calc?.profit.toFixed(2) || '0.00'}
+                            </div>
+                          </div>
+                          <div>
+                            <div className="text-xs text-gray-500">Margin</div>
+                            <div className={`text-lg font-bold ${isProfitable ? 'text-green-700' : 'text-red-700'}`}>
+                              {calc?.margin.toFixed(1) || '0'}%
+                            </div>
+                          </div>
+                        </div>
+
+                        {calc && (
+                          <div className="text-xs text-gray-600 mb-2">
+                            Est. fees & shipping: ${calc.fees.toFixed(2)} (15% Amazon fees + $5 shipping estimate)
+                          </div>
+                        )}
+
+                        {item.notes && (
+                          <div className="text-sm text-gray-600 italic mb-2">
+                            Note: {item.notes}
+                          </div>
+                        )}
+
+                        <div className="flex gap-2">
+                          <a
+                            href={getAmazonSearchUrl(item.name)}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-xs bg-orange-500 hover:bg-orange-600 text-white px-3 py-1 rounded flex items-center gap-1 transition-colors"
+                          >
+                            <Search size={12} />
+                            Search Amazon
+                          </a>
+                          {item.campusUrl && (
+                            <a
+                              href={item.campusUrl}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="text-xs bg-indigo-500 hover:bg-indigo-600 text-white px-3 py-1 rounded flex items-center gap-1 transition-colors"
+                            >
+                              <ExternalLink size={12} />
+                              View Listing
+                            </a>
+                          )}
+                        </div>
+                      </div>
+
+                      <button
+                        onClick={() => deleteItem(item.id)}
+                        className="text-red-500 hover:text-red-700 p-2 transition-colors"
+                        title="Delete item"
+                      >
+                        <Trash2 size={20} />
+                      </button>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          )}
+        </div>
+
+        {/* Tips */}
+        <div className="bg-amber-50 border border-amber-200 rounded-lg p-4 mt-6">
+          <h3 className="font-semibold text-amber-900 mb-2">💡 Pro Tips:</h3>
+          <ul className="text-sm text-amber-800 space-y-1">
+            <li>• Factor in your time - only flip items with sufficient profit margin ($15-20+ recommended)</li>
+            <li>• Check sold listings on Amazon to verify actual selling prices, not just listing prices</li>
+            <li>• Consider item weight/size - heavy/large items have higher shipping costs</li>
+            <li>• Build relationships with Campus Connect sellers for first dibs on new listings</li>
+            <li>• Track which categories are most profitable for your campus</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  );
+}
